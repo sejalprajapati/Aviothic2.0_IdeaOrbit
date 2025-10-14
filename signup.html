@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR/VR 3D Registration Portal</title>
+    <style>
+        
+
+        :root {
+            --neon-color: #00ffcc; /* Bright AR/VR Teal */
+            --bg-color: #0d1a26;   /* Dark Space Blue */
+            --bg-grad-start: #061017;
+            --bg-grad-end: #0d1a26;
+            --form-bg: rgba(20, 36, 50, 0.9);
+            --border-color: #009973;
+            --input-bg: #152c3f;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--bg-grad-start), var(--bg-grad-end));
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            perspective: 1000px; /* Essential for 3D effect */
+            overflow: hidden;
+        }
+
+        /* Holographic Grid Background Effect */
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(to right, rgba(0,255,204,0.1) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(0,255,204,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.3;
+            animation: moveGrid 60s linear infinite;
+        }
+
+        @keyframes moveGrid {
+            from { background-position: 0 0; }
+            to { background-position: 100% 100%; }
+        }
+
+        /* 3D Container (The "Model") */
+        .signup-container {
+            width: 380px; /* Slightly wider for more fields */
+            padding: 40px;
+            background: var(--form-bg);
+            border-radius: 15px;
+            box-shadow: 0 0 30px var(--neon-color);
+            position: relative;
+            z-index: 10;
+            transform: rotateY(0deg) scale(1);
+            transition: transform 1s ease-in-out, box-shadow 1s;
+
+            /* Visualizing the "3D Model" with layers */
+            border: 3px solid var(--border-color);
+            border-bottom: 10px solid var(--neon-color); /* Neon bar on the bottom */
+        }
+
+        .signup-container:hover {
+            transform: rotateY(-5deg) scale(1.03); /* Slight opposite rotation from login */
+            box-shadow: 0 0 50px var(--neon-color), inset 0 0 10px var(--neon-color);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--neon-color);
+            text-shadow: 0 0 10px var(--neon-color);
+            margin-bottom: 30px;
+            font-size: 1.8em;
+            letter-spacing: 2px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--neon-color);
+            font-size: 0.9em;
+            transition: 0.3s;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 5px;
+            background: var(--input-bg);
+            color: white;
+            font-size: 1em;
+            box-sizing: border-box;
+            border-bottom: 2px solid var(--border-color);
+            transition: 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-bottom: 2px solid var(--neon-color);
+            box-shadow: 0 2px 10px rgba(0, 255, 204, 0.4);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: var(--neon-color);
+            color: var(--bg-color);
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.4s;
+            text-transform: uppercase;
+            box-shadow: 0 0 10px var(--neon-color);
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: white;
+            color: #000;
+            box-shadow: 0 0 20px white;
+            transform: translateY(-2px);
+        }
+
+        .message {
+            text-align: center;
+            margin-top: 20px;
+            color: #ff4d4d; /* Error red */
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .success {
+             color: var(--neon-color);
+        }
+
+        .arvr-icon {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 3em;
+            color: var(--neon-color);
+            text-shadow: 0 0 15px var(--neon-color);
+            animation: pulse 1.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.7; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.05); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="grid-overlay"></div>
+
+    <div class="signup-container" id="signupFormContainer">
+        <div class="arvr-icon">
+            &#9650; </div>
+        <h1>CREATE AR/VR PROFILE</h1>
+
+        <form id="signupForm">
+             <div class="input-group">
+                <label for="email">EMAIL</label>
+                <input type="email" id="email" name="email" required autocomplete="off">
+            </div>
+
+            <div class="input-group">
+                <label for="username">CHOOSE AVATAR NAME</label>
+                <input type="text" id="username" name="username" required autocomplete="off">
+            </div>
+
+            <div class="input-group">
+                <label for="password">SETUP PASSWORD</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+             <div class="input-group">
+                <label for="confirmPassword">CONFIRM PASSWORD</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+            </div>
+
+            <button type="submit">REGISTER & UPLOAD DATA</button>
+        </form>
+
+        <p class="message" id="signupMessage"></p>
+    </div>
+
+    <script>
+        // -------------------------------------------
+        // JAVASCRIPT LOGIC
+        // -------------------------------------------
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('signupForm');
+            const messageElement = document.getElementById('signupMessage');
+            const container = document.getElementById('signupFormContainer');
+
+            // --- Form Submission Handler ---
+            form.addEventListener('submit', (event) => {
+                event.preventDefault(); // Stop the form from submitting normally
+
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+
+                messageElement.style.opacity = 1;
+                messageElement.classList.remove('success');
+
+                // Basic validation
+                if (password !== confirmPassword) {
+                    messageElement.textContent = 'ERROR: Passwords do not match. Re-enter credentials.';
+                    container.style.transform = 'translateX(-5px)';
+
+                    // Simple shake/error animation
+                    setTimeout(() => {
+                         container.style.transform = 'translateX(5px)';
+                    }, 100);
+                    setTimeout(() => {
+                         container.style.transform = 'rotateY(0deg) scale(1)';
+                    }, 300);
+                    return;
+                }
+
+                // Mock successful registration
+                messageElement.textContent = Registration Complete for User: ${username}! Preparing Virtual Assets...;
+                messageElement.classList.add('success');
+
+                // --- AR/VR/3D Mock Effect (JS driven) ---
+                container.style.transform = 'rotateZ(10deg) rotateX(-20deg) scale(0.8)';
+                container.style.boxShadow = '0 0 50px #00ffff, inset 0 0 10px #00ffff'; // Brighter glow
+
+                // Simulate success and potential redirection
+                setTimeout(() => {
+                    alert('Profile Created! Redirecting to Login...');
+                    // window.location.href = '/login.html'; // Uncomment for real navigation
+                }, 2500);
+            });
+
+            // --- Small Mouse-Follow 3D Tilt Effect for better immersion ---
+            document.addEventListener('mousemove', (e) => {
+                const rect = container.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+
+                const offsetX = (e.clientX - centerX) / 50; // Controls rotation sensitivity
+                const offsetY = (e.clientY - centerY) / 50;
+
+                // Apply a subtle rotation based on mouse position
+                container.style.transform = perspective(1000px) rotateX(${-offsetY}deg) rotateY(${offsetX}deg) scale(1.0);
+            });
+
+            // Reset transformation when the mouse leaves the container area
+            container.addEventListener('mouseleave', () => {
+                container.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
