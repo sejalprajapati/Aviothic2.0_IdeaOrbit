@@ -1,97 +1,273 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login Page</title>
-  <style>
-    body {
-      background: linear-gradient(135deg, #3b82f6, #9333ea);
-      font-family: "Poppins", sans-serif;
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .container {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(15px);
-      padding: 40px;
-      border-radius: 15px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.4);
-      text-align: center;
-      width: 320px;
-    }
-    input {
-      display: block;
-      width: 100%;
-      margin: 15px 0;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-    }
-    button {
-      background: #22c55e;
-      color: #fff;
-      border: none;
-      padding: 12px 40px;
-      border-radius: 10px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    button:hover {
-      background: #16a34a;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR/VR 3D Login Portal</title>
+    <style>
+        /* ------------------------------------------- */
+        /* CSS STYLES */
+        /* ------------------------------------------- */
+
+        :root {
+            --neon-color: #00ffcc; /* Bright AR/VR Teal */
+            --bg-color: #0d1a26;   /* Dark Space Blue */
+            --bg-grad-start: #061017;
+            --bg-grad-end: #0d1a26;
+            --form-bg: rgba(20, 36, 50, 0.9);
+            --border-color: #009973;
+            --input-bg: #152c3f;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--bg-grad-start), var(--bg-grad-end));
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            perspective: 1000px; /* Essential for 3D effect */
+            overflow: hidden;
+        }
+
+        /* Holographic Grid Background Effect */
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(to right, rgba(0,255,204,0.1) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(0,255,204,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.3;
+            animation: moveGrid 60s linear infinite;
+        }
+
+        @keyframes moveGrid {
+            from { background-position: 0 0; }
+            to { background-position: 100% 100%; }
+        }
+
+        /* 3D Container (The "Model") */
+        .login-container {
+            width: 350px;
+            padding: 40px;
+            background: var(--form-bg);
+            border-radius: 15px;
+            box-shadow: 0 0 30px var(--neon-color);
+            position: relative;
+            z-index: 10;
+            transform: rotateY(0deg) scale(1);
+            transition: transform 1s ease-in-out, box-shadow 1s;
+
+            /* Visualizing the "3D Model" with layers */
+            border: 3px solid var(--border-color);
+            border-top: 10px solid var(--neon-color);
+        }
+
+        .login-container:hover {
+            transform: rotateY(5deg) scale(1.03);
+            box-shadow: 0 0 50px var(--neon-color), inset 0 0 10px var(--neon-color);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--neon-color);
+            text-shadow: 0 0 10px var(--neon-color);
+            margin-bottom: 30px;
+            font-size: 1.8em;
+            letter-spacing: 2px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--neon-color);
+            font-size: 0.9em;
+            transition: 0.3s;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 5px;
+            background: var(--input-bg);
+            color: white;
+            font-size: 1em;
+            box-sizing: border-box;
+            border-bottom: 2px solid var(--border-color);
+            transition: 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-bottom: 2px solid var(--neon-color);
+            box-shadow: 0 2px 10px rgba(0, 255, 204, 0.4);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: var(--neon-color);
+            color: var(--bg-color);
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.4s;
+            text-transform: uppercase;
+            box-shadow: 0 0 10px var(--neon-color);
+        }
+
+        button:hover {
+            background: white;
+            color: #000;
+            box-shadow: 0 0 20px white;
+            transform: translateY(-2px);
+        }
+
+        .message {
+            text-align: center;
+            margin-top: 20px;
+            color: #ff4d4d; /* Error red */
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .success {
+             color: var(--neon-color);
+        }
+
+        /* Minimal JS-Driven 3D Hint */
+        .glow {
+            box-shadow: 0 0 10px var(--neon-color), 
+                        0 0 20px var(--neon-color),
+                        0 0 30px var(--neon-color);
+        }
+
+        /* AR/VR Logo/Icon Placeholder */
+        .arvr-icon {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 3em;
+            color: var(--neon-color);
+            text-shadow: 0 0 15px var(--neon-color);
+            animation: pulse 1.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.7; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.05); }
+        }
+
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Login</h2>
-    <form id="loginForm">
-      <input type="email" id="email" placeholder="Email" required />
-      <input type="password" id="password" placeholder="Password" required />
-      <button type="submit">Login</button>
-    </form>
-    <p id="msg"></p>
-  </div>
 
-  <script>
-    const form = document.getElementById("loginForm");
-    const msg = document.getElementById("msg");
+    <div class="grid-overlay"></div>
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+    <div class="login-container" id="loginFormContainer">
+        <div class="arvr-icon">
+            &#9733; </div>
+        <h1>ACCESS VIRTUAL PORTAL</h1>
 
-      try {
-        const res = await fetch("http://localhost:5000/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="username">USERNAME</label>
+                <input type="text" id="username" name="username" required autocomplete="off">
+            </div>
+
+            <div class="input-group">
+                <label for="password">PASSWORD</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <button type="submit">LOGIN & ACTIVATE</button>
+        </form>
+
+        <p class="message" id="loginMessage"></p>
+    </div>
+
+    <script>
+        // -------------------------------------------
+        // JAVASCRIPT LOGIC
+        // -------------------------------------------
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('loginForm');
+            const messageElement = document.getElementById('loginMessage');
+            const container = document.getElementById('loginFormContainer');
+
+            // --- Form Submission Handler ---
+            form.addEventListener('submit', (event) => {
+                event.preventDefault(); // Stop the form from submitting normally
+
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+
+                messageElement.style.opacity = 1;
+                messageElement.classList.remove('success');
+
+                // Basic validation (replace with actual backend check in a real app)
+                if (username === 'aruser' && password === 'vrpass') {
+                    messageElement.textContent = 'Login Successful! Initializing AR/VR Environment...';
+                    messageElement.classList.add('success');
+                    
+                    // --- AR/VR/3D Mock Effect (JS driven) ---
+                    container.style.transform = 'rotateX(20deg) rotateZ(10deg) scale(0.8)';
+                    container.classList.add('glow');
+
+                    // Simulate navigation after a delay
+                    setTimeout(() => {
+                        alert('Welcome to the 3D Virtual Hub!');
+                        // window.location.href = '/dashboard.html'; // Uncomment for real navigation
+                    }, 2000);
+
+                } else {
+                    messageElement.textContent = 'Access Denied. Check Credentials and Try Again.';
+                    container.style.transform = 'translateX(-5px)';
+                    
+                    // Simple shake/error animation
+                    setTimeout(() => {
+                         container.style.transform = 'translateX(5px)';
+                    }, 100);
+                    setTimeout(() => {
+                         container.style.transform = 'rotateY(0deg) scale(1)';
+                         container.classList.remove('glow');
+                    }, 300);
+                }
+            });
+
+            // --- Small Mouse-Follow 3D Tilt Effect for better immersion ---
+            document.addEventListener('mousemove', (e) => {
+                const rect = container.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+
+                const offsetX = (e.clientX - centerX) / 50; // Controls rotation sensitivity
+                const offsetY = (e.clientY - centerY) / 50;
+
+                // Apply a subtle rotation based on mouse position
+                container.style.transform = `perspective(1000px) rotateX(${-offsetY}deg) rotateY(${offsetX}deg) scale(1.0)`;
+            });
+
+            // Reset transformation when the mouse leaves the container area
+            container.addEventListener('mouseleave', () => {
+                container.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
+            });
         });
-
-        const data = await res.json();
-        if (data.success) {
-          msg.textContent = "✅ Login Successful!";
-          msg.style.color = "#00ff88";
-          setTimeout(() => {
-            // 👇 Redirect user to user_form.html instead of form.html
-            window.location.href = "user_form.html";
-          }, 1000);
-        } else {
-          msg.textContent = "❌ Invalid credentials!";
-          msg.style.color = "red";
-        }
-      } catch (error) {
-        msg.textContent = "⚠️ Server error!";
-        msg.style.color = "yellow";
-      }
-    });
-  </script>
+    </script>
 </body>
 </html>
