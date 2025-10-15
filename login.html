@@ -1,273 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR/VR 3D Login Portal</title>
-    <style>
-        /* ------------------------------------------- */
-        /* CSS STYLES */
-        /* ------------------------------------------- */
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AR/VR 3D Login Portal</title>
+<style>
+:root {
+  --neon-color:#00ffcc;
+  --bg-color:#0d1a26;
+  --bg-grad-start:#061017;
+  --bg-grad-end:#0d1a26;
+  --form-bg:rgba(20,36,50,0.9);
+  --border-color:#009973;
+  --input-bg:#152c3f;
+}
 
-        :root {
-            --neon-color: #00ffcc; /* Bright AR/VR Teal */
-            --bg-color: #0d1a26;   /* Dark Space Blue */
-            --bg-grad-start: #061017;
-            --bg-grad-end: #0d1a26;
-            --form-bg: rgba(20, 36, 50, 0.9);
-            --border-color: #009973;
-            --input-bg: #152c3f;
-        }
+body {
+  margin:0; padding:0;
+  display:flex; justify-content:center; align-items:center;
+  min-height:100vh;
+  background:linear-gradient(135deg,var(--bg-grad-start),var(--bg-grad-end));
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color:white;
+  perspective:1000px;
+  overflow:hidden;
+}
 
-        body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, var(--bg-grad-start), var(--bg-grad-end));
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: white;
-            perspective: 1000px; /* Essential for 3D effect */
-            overflow: hidden;
-        }
+.grid-overlay {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  background-image: linear-gradient(to right, rgba(0,255,204,0.1) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(0,255,204,0.1) 1px, transparent 1px);
+  background-size:50px 50px;
+  opacity:0.3;
+  animation:moveGrid 60s linear infinite;
+}
 
-        /* Holographic Grid Background Effect */
-        .grid-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: linear-gradient(to right, rgba(0,255,204,0.1) 1px, transparent 1px),
-                              linear-gradient(to bottom, rgba(0,255,204,0.1) 1px, transparent 1px);
-            background-size: 50px 50px;
-            opacity: 0.3;
-            animation: moveGrid 60s linear infinite;
-        }
+@keyframes moveGrid { from {background-position:0 0;} to {background-position:100% 100%;} }
 
-        @keyframes moveGrid {
-            from { background-position: 0 0; }
-            to { background-position: 100% 100%; }
-        }
+.login-container {
+  width:350px; padding:40px;
+  background:var(--form-bg);
+  border-radius:15px;
+  box-shadow:0 0 30px var(--neon-color);
+  position:relative; z-index:10;
+  transform:rotateY(0deg) scale(1);
+  transition:transform 1s ease-in-out, box-shadow 1s, opacity 1s;
+  border:3px solid var(--border-color);
+  border-top:10px solid var(--neon-color);
+  opacity:1;
+}
 
-        /* 3D Container (The "Model") */
-        .login-container {
-            width: 350px;
-            padding: 40px;
-            background: var(--form-bg);
-            border-radius: 15px;
-            box-shadow: 0 0 30px var(--neon-color);
-            position: relative;
-            z-index: 10;
-            transform: rotateY(0deg) scale(1);
-            transition: transform 1s ease-in-out, box-shadow 1s;
+.login-container:hover {
+  transform:rotateY(5deg) scale(1.03);
+  box-shadow:0 0 50px var(--neon-color), inset 0 0 10px var(--neon-color);
+}
 
-            /* Visualizing the "3D Model" with layers */
-            border: 3px solid var(--border-color);
-            border-top: 10px solid var(--neon-color);
-        }
+h1 {
+  text-align:center; color:var(--neon-color); text-shadow:0 0 10px var(--neon-color);
+  margin-bottom:30px; font-size:1.8em; letter-spacing:2px;
+}
 
-        .login-container:hover {
-            transform: rotateY(5deg) scale(1.03);
-            box-shadow: 0 0 50px var(--neon-color), inset 0 0 10px var(--neon-color);
-        }
+.input-group { margin-bottom:25px; }
+.input-group label { display:block; margin-bottom:8px; color:var(--neon-color); font-size:0.9em; }
+.input-group input { width:100%; padding:12px 15px; border:none; border-radius:5px; background:var(--input-bg); color:white; font-size:1em; border-bottom:2px solid var(--border-color); transition:0.3s; }
+.input-group input:focus { outline:none; border-bottom:2px solid var(--neon-color); box-shadow:0 2px 10px rgba(0,255,204,0.4); }
 
-        h1 {
-            text-align: center;
-            color: var(--neon-color);
-            text-shadow: 0 0 10px var(--neon-color);
-            margin-bottom: 30px;
-            font-size: 1.8em;
-            letter-spacing: 2px;
-        }
+button { width:100%; padding:15px; background:var(--neon-color); color:var(--bg-color); border:none; border-radius:5px; font-size:1.1em; font-weight:bold; cursor:pointer; transition:0.4s; text-transform:uppercase; box-shadow:0 0 10px var(--neon-color);}
+button:hover { background:white; color:#000; box-shadow:0 0 20px white; transform:translateY(-2px); }
 
-        .input-group {
-            margin-bottom: 25px;
-            position: relative;
-        }
+.message { text-align:center; margin-top:20px; color:#ff4d4d; font-weight:bold; opacity:0; transition:opacity 0.5s; }
+.success { color:var(--neon-color); }
+.glow { box-shadow:0 0 10px var(--neon-color),0 0 20px var(--neon-color),0 0 30px var(--neon-color); }
 
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--neon-color);
-            font-size: 0.9em;
-            transition: 0.3s;
-        }
+.arvr-icon { text-align:center; margin-bottom:20px; font-size:3em; color:var(--neon-color); text-shadow:0 0 15px var(--neon-color); animation:pulse 1.5s infinite alternate; }
+@keyframes pulse { 0% { opacity:0.7; transform:scale(1); } 100% { opacity:1; transform:scale(1.05); } }
 
-        .input-group input {
-            width: 100%;
-            padding: 12px 15px;
-            border: none;
-            border-radius: 5px;
-            background: var(--input-bg);
-            color: white;
-            font-size: 1em;
-            box-sizing: border-box;
-            border-bottom: 2px solid var(--border-color);
-            transition: 0.3s;
-        }
-
-        .input-group input:focus {
-            outline: none;
-            border-bottom: 2px solid var(--neon-color);
-            box-shadow: 0 2px 10px rgba(0, 255, 204, 0.4);
-        }
-
-        button {
-            width: 100%;
-            padding: 15px;
-            background: var(--neon-color);
-            color: var(--bg-color);
-            border: none;
-            border-radius: 5px;
-            font-size: 1.1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.4s;
-            text-transform: uppercase;
-            box-shadow: 0 0 10px var(--neon-color);
-        }
-
-        button:hover {
-            background: white;
-            color: #000;
-            box-shadow: 0 0 20px white;
-            transform: translateY(-2px);
-        }
-
-        .message {
-            text-align: center;
-            margin-top: 20px;
-            color: #ff4d4d; /* Error red */
-            font-weight: bold;
-            opacity: 0;
-            transition: opacity 0.5s;
-        }
-
-        .success {
-             color: var(--neon-color);
-        }
-
-        /* Minimal JS-Driven 3D Hint */
-        .glow {
-            box-shadow: 0 0 10px var(--neon-color), 
-                        0 0 20px var(--neon-color),
-                        0 0 30px var(--neon-color);
-        }
-
-        /* AR/VR Logo/Icon Placeholder */
-        .arvr-icon {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 3em;
-            color: var(--neon-color);
-            text-shadow: 0 0 15px var(--neon-color);
-            animation: pulse 1.5s infinite alternate;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 0.7; transform: scale(1); }
-            100% { opacity: 1; transform: scale(1.05); }
-        }
-
-    </style>
+</style>
 </head>
 <body>
 
-    <div class="grid-overlay"></div>
+<div class="grid-overlay"></div>
 
-    <div class="login-container" id="loginFormContainer">
-        <div class="arvr-icon">
-            &#9733; </div>
-        <h1>ACCESS VIRTUAL PORTAL</h1>
+<div class="login-container" id="loginFormContainer">
+<div class="arvr-icon">&#9733;</div>
+<h1>ACCESS VIRTUAL PORTAL</h1>
 
-        <form id="loginForm">
-            <div class="input-group">
-                <label for="username">USERNAME</label>
-                <input type="text" id="username" name="username" required autocomplete="off">
-            </div>
+<form id="loginForm">
+  <div class="input-group">
+    <label for="username">USERNAME</label>
+    <input type="text" id="username" name="username" required autocomplete="off">
+  </div>
+  <div class="input-group">
+    <label for="password">PASSWORD</label>
+    <input type="password" id="password" name="password" required>
+  </div>
+  <button type="submit">LOGIN & ACTIVATE</button>
+</form>
 
-            <div class="input-group">
-                <label for="password">PASSWORD</label>
-                <input type="password" id="password" name="password" required>
-            </div>
+<p class="message" id="loginMessage"></p>
+</div>
 
-            <button type="submit">LOGIN & ACTIVATE</button>
-        </form>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('loginForm');
+    const messageElement = document.getElementById('loginMessage');
+    const container = document.getElementById('loginFormContainer');
 
-        <p class="message" id="loginMessage"></p>
-    </div>
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
 
-    <script>
-        // -------------------------------------------
-        // JAVASCRIPT LOGIC
-        // -------------------------------------------
+        messageElement.style.opacity = 1;
+        messageElement.classList.remove('success');
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const form = document.getElementById('loginForm');
-            const messageElement = document.getElementById('loginMessage');
-            const container = document.getElementById('loginFormContainer');
+        if(username === 'aruser' && password === 'vrpass') {
+            messageElement.textContent = 'Login Successful! Redirecting...';
+            messageElement.classList.add('success');
+            container.classList.add('glow');
 
-            // --- Form Submission Handler ---
-            form.addEventListener('submit', (event) => {
-                event.preventDefault(); // Stop the form from submitting normally
+            container.style.transition = "transform 1s ease, opacity 1s ease";
+            container.style.transform = "scale(0.1) rotateY(20deg) rotateX(20deg)";
+            container.style.opacity = "0";
 
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
+            // ✅ Redirect to ai_future_assistant.html in same folder
+            setTimeout(() => {
+                window.location.href = "./ai_future_assistant.html";
+            }, 1000);
 
-                messageElement.style.opacity = 1;
-                messageElement.classList.remove('success');
+        } else {
+            messageElement.textContent = 'Access Denied. Check Credentials.';
+            container.style.transform = 'translateX(-5px)';
+            setTimeout(()=>{ container.style.transform = 'translateX(5px)'; },100);
+            setTimeout(()=>{ container.style.transform = 'rotateY(0deg) scale(1)'; container.classList.remove('glow'); },300);
+        }
+    });
 
-                // Basic validation (replace with actual backend check in a real app)
-                if (username === 'aruser' && password === 'vrpass') {
-                    messageElement.textContent = 'Login Successful! Initializing AR/VR Environment...';
-                    messageElement.classList.add('success');
-                    
-                    // --- AR/VR/3D Mock Effect (JS driven) ---
-                    container.style.transform = 'rotateX(20deg) rotateZ(10deg) scale(0.8)';
-                    container.classList.add('glow');
+    document.addEventListener('mousemove',(e)=>{
+        const rect = container.getBoundingClientRect();
+        const centerX = rect.left + rect.width/2;
+        const centerY = rect.top + rect.height/2;
+        const offsetX = (e.clientX - centerX)/50;
+        const offsetY = (e.clientY - centerY)/50;
+        container.style.transform = `perspective(1000px) rotateX(${-offsetY}deg) rotateY(${offsetX}deg) scale(1.0)`;
+    });
 
-                    // Simulate navigation after a delay
-                    setTimeout(() => {
-                        alert('Welcome to the 3D Virtual Hub!');
-                        // window.location.href = '/dashboard.html'; // Uncomment for real navigation
-                    }, 2000);
+    container.addEventListener('mouseleave',()=>{
+        container.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
+    });
+});
+</script>
 
-                } else {
-                    messageElement.textContent = 'Access Denied. Check Credentials and Try Again.';
-                    container.style.transform = 'translateX(-5px)';
-                    
-                    // Simple shake/error animation
-                    setTimeout(() => {
-                         container.style.transform = 'translateX(5px)';
-                    }, 100);
-                    setTimeout(() => {
-                         container.style.transform = 'rotateY(0deg) scale(1)';
-                         container.classList.remove('glow');
-                    }, 300);
-                }
-            });
-
-            // --- Small Mouse-Follow 3D Tilt Effect for better immersion ---
-            document.addEventListener('mousemove', (e) => {
-                const rect = container.getBoundingClientRect();
-                const centerX = rect.left + rect.width / 2;
-                const centerY = rect.top + rect.height / 2;
-
-                const offsetX = (e.clientX - centerX) / 50; // Controls rotation sensitivity
-                const offsetY = (e.clientY - centerY) / 50;
-
-                // Apply a subtle rotation based on mouse position
-                container.style.transform = `perspective(1000px) rotateX(${-offsetY}deg) rotateY(${offsetX}deg) scale(1.0)`;
-            });
-
-            // Reset transformation when the mouse leaves the container area
-            container.addEventListener('mouseleave', () => {
-                container.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
-            });
-        });
-    </script>
 </body>
 </html>
